@@ -1,0 +1,18 @@
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Sort [hour_of_day#555 ASC NULLS FIRST, alert_priority#755 ASC NULLS FIRST], true, 0
+   +- Exchange rangepartitioning(hour_of_day#555 ASC NULLS FIRST, alert_priority#755 ASC NULLS FIRST, 16), ENSURE_REQUIREMENTS, [plan_id=2928]
+      +- HashAggregate(keys=[hour_of_day#555, risk_tier#557, tier_description#754, alert_priority#755], functions=[count(1), sum(CASE WHEN (Class#553 = 1) THEN 1 ELSE 0 END), sum(Amount#554), avg(Amount#554), max(Amount#554)])
+         +- Exchange hashpartitioning(hour_of_day#555, risk_tier#557, tier_description#754, alert_priority#755, 16), ENSURE_REQUIREMENTS, [plan_id=2925]
+            +- HashAggregate(keys=[hour_of_day#555, risk_tier#557, tier_description#754, alert_priority#755], functions=[partial_count(1), partial_sum(CASE WHEN (Class#553 = 1) THEN 1 ELSE 0 END), partial_sum(Amount#554), partial_avg(Amount#554), partial_max(Amount#554)])
+               +- Project [risk_tier#557, Amount#554, Class#553, hour_of_day#555, tier_description#754, alert_priority#755]
+                  +- BroadcastHashJoin [risk_tier#557], [risk_tier#753], LeftOuter, BuildRight, false, false
+                     :- Project [Amount#554, Class#553, hour_of_day#555, CASE WHEN (Amount#554 < 10.0) THEN MICRO WHEN (Amount#554 < 100.0) THEN LOW WHEN (Amount#554 < 500.0) THEN MEDIUM ELSE HIGH END AS risk_tier#557]
+                     :  +- HashAggregate(keys=[Time#0, V1#1, V2#2, Amount#29], functions=[first(Class#30, false)])
+                     :     +- Exchange hashpartitioning(Time#0, V1#1, V2#2, Amount#29, 16), ENSURE_REQUIREMENTS, [plan_id=2916]
+                     :        +- HashAggregate(keys=[knownfloatingpointnormalized(normalizenanandzero(Time#0)) AS Time#0, knownfloatingpointnormalized(normalizenanandzero(V1#1)) AS V1#1, knownfloatingpointnormalized(normalizenanandzero(V2#2)) AS V2#2, knownfloatingpointnormalized(normalizenanandzero(Amount#29)) AS Amount#29], functions=[partial_first(Class#30, false)])
+                     :           +- Filter (((((((isnotnull(Time#0) AND NOT isnan(Time#0)) AND isnotnull(Amount#29)) AND NOT isnan(Amount#29)) AND isnotnull(Class#30)) AND (Time#0 >= 0.0)) AND (Amount#29 >= 0.0)) AND Class#30 IN (0,1))
+                     :              +- FileScan csv [Time#0,V1#1,V2#2,Amount#29,Class#30] Batched: false, DataFilters: [isnotnull(Time#0), NOT isnan(Time#0), isnotnull(Amount#29), NOT isnan(Amount#29), isnotnull(Clas..., Format: CSV, Location: InMemoryFileIndex(3 paths)[file:/D:/BigData_Nhom9/DoAn_2/data/raw/credit_card_transactions/ingest..., PartitionFilters: [], PushedFilters: [IsNotNull(Time), IsNotNull(Amount), IsNotNull(Class), GreaterThanOrEqual(Time,0.0), GreaterThanO..., ReadSchema: struct<Time:double,V1:double,V2:double,Amount:double,Class:int>
+                     +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, string, false]),false), [plan_id=2920]
+                        +- Scan ExistingRDD[risk_tier#753,tier_description#754,alert_priority#755]
+
