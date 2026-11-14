@@ -2,7 +2,7 @@
 .venv/
 venv/
 __pycache__/
-
+cd ..
 # Dữ liệu lớn và kết quả xuất ra (Nên bỏ qua nếu file > 50MB)
 DoAn_2/data/
 DoAn_2/logs/
