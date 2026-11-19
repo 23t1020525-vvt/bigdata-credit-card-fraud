@@ -7,27 +7,29 @@
 ## 1. Cấu trúc thư mục
 
 ```text
-D:\bigdata_credit\
-├── .gitignore                      # Cấu hình bỏ qua .venv và file CSV gốc lớn
-├── README.md                       # Hướng dẫn thực thi dự án
-├── requirements.txt                # Khai báo phụ thuộc (pyspark==4.2.0, v.v.)
-├── data/
-│   ├── source_input/
-│   │   └── creditcard.csv          # File nguồn gốc từ Kaggle (284,807 records)
-│   └── raw/
-│       └── credit_card_transactions/
-│           └── ingest_date=YYYY-MM-DD/
-│               └── run_<TIMESTAMP>/
-│                   └── raw_transactions.csv  # Raw storage preserved
-├── logs/
-│   ├── env_check.txt               # Bằng chứng Smoke Test môi trường
-│   └── ingest_credit_card.log      # Log thực thi Ingestion Pipeline
-├── metadata/
-│   └── manifests/
-│       └── manifest_run_<TIMESTAMP>.json # File lưu vết SHA-256, count, status
-└── src/
-    ├── env_check.py                # Script kiểm tra Smoke Test (Tầng 5)
-    └── ingest_credit_card.py       # Script nạp dữ liệu & kiểm tra Quality Gate
+bigdata-credit-card-fraud/
+└── DoAn_2/
+    ├── data/
+    │   ├── raw/
+    │   │   └── credit_card_transactions/
+    │   │       └── ingest_date=2026-11-12/
+    │   │           └── run_<TIMESTAMP>/
+    │   │               └── raw_transactions.csv  # Raw storage preserved
+    │   └── source_input/
+    │       └── creditcard.csv          # File nguồn gốc từ Kaggle (284,807 records)
+    ├── logs/
+    │   ├── env_check.txt               # Bằng chứng Smoke Test môi trường
+    │   └── ingest_credit_card.log      # Log thực thi Ingestion Pipeline
+    ├── metadata/
+    │   └── manifests/
+    │       ├── manifest_run_20261112_122401.json # File lưu vết SHA-256, count, status
+    │       ├── manifest_run_20261112_122512.json[cite: 1]
+    │       └── manifest_run_20261112_123623.json[cite: 1]
+    ├── src/
+    │   ├── env_check.py                # Script kiểm tra Smoke Test
+    │   └── ingest_credit_card.py       # Script nạp dữ liệu & kiểm tra Quality Gate
+    ├── DoAn_2.md                       # Tài liệu/Báo cáo đồ án 2
+    └── requirements.txt                # Khai báo phụ thuộc (pyspark==4.2.0, v.v.)
 ```
 
 ---
