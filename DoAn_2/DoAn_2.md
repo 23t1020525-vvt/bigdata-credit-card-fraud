@@ -23,8 +23,6 @@ bigdata-credit-card-fraud/
     ├── metadata/
     │   └── manifests/
     │       ├── manifest_run_20261112_122401.json # File lưu vết SHA-256, count, status
-    │       ├── manifest_run_20261112_122512.json
-    │       └── manifest_run_20261112_123623.json
     ├── src/
     │   ├── env_check.py                # Script kiểm tra Smoke Test
     │   └── ingest_credit_card.py       # Script nạp dữ liệu & kiểm tra Quality Gate
