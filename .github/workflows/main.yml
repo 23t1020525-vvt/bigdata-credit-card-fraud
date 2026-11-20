@@ -1,0 +1,64 @@
+name: benchmark-baseline
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cai thu vien
+        run: pip install -r DoAn_2/requirements.txt kaggle
+
+      - name: Thong tin may
+        run: |
+          echo "cores: $(nproc)"
+          free -h
+          java -version
+          python -c "import pyspark; print('pyspark', pyspark.__version__)"
+
+      - name: Tai du lieu va ingest (DoAn_2)
+        working-directory: DoAn_2
+        run: |
+          rm -rf metadata/manifests
+          mkdir -p data/source_input
+          kaggle datasets download -d mlg-ulb/creditcardfraud -p data/source_input --unzip
+          python src/ingest_credit_card.py
+
+      - name: Chay pipeline 3 lan (DoAn_3)
+        working-directory: DoAn_3
+        run: |
+          mkdir -p output
+          for i in 1 2 3; do
+            python src/pipeline.py 2>&1 | tee output/console_run$i.log
+            cp output/quality_metrics.json output/quality_metrics_run$i.json
+          done
+
+      - name: Tinh median
+        working-directory: DoAn_3
+        run: |
+          python - <<'EOF'
+          import json, statistics
+          t = [json.load(open(f"output/quality_metrics_run{i}.json"))["baseline_runtime_sec"] for i in (1, 2, 3)]
+          print("Runs:", t)
+          print("Median:", statistics.median(t))
+          EOF
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: DoAn_3/output/
