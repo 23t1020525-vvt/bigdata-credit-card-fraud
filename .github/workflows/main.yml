@@ -21,15 +21,7 @@ jobs:
           python-version: '3.12'
 
       - name: Cai thu vien
-        run: pip install -r DoAn_2/requirements.txt kaggle
-
-      - name: Thong tin may
-        run: |
-          echo "cores: $(nproc)"
-          free -h
-          java -version
-          python -c "import pyspark; print('pyspark', pyspark.__version__)"
-
+        run: pip install -r DoAn_2/requirements.txt kaggle six
       - name: Tai du lieu va ingest (DoAn_2)
         working-directory: DoAn_2
         run: |
